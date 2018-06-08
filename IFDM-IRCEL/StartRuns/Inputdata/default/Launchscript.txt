@@ -1,0 +1,17 @@
+cd folder_base/date
+chmod +x ifdm
+cp ifdm_coupling.conf ifdm.conf
+./ifdm > out_coupling.txt
+cp ifdm_add.conf ifdm.conf
+./ifdm > out_add.txt
+
+check=`awk '/./{line=$0} END{print line}' out_coupling.txt  | cut -c1-33`
+if [ "$check" == " Time elapsed in midsection (s) =" ]; then
+    rename 's/saga/saga_date/' *
+    sed -i 's/ //g' *saga*
+    mv *saga* outputlocation
+    cd .
+    rm folder_base/date -r
+else
+    echo 'ERROR: check run'
+fi

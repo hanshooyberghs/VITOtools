@@ -1,0 +1,23 @@
+#!/bin/bash
+#PBS -N IFDM_worker
+#PBS -l walltime=40:00:00,nodes=1:ppn=8,pmem=8gb
+ulimit -s unlimited
+
+cd folder_base/$date
+chmod +x ifdm
+cp ifdm_coupling.conf ifdm.conf
+./ifdm > out_coupling.txt
+cp ifdm_add.conf ifdm.conf
+./ifdm > out_add.txt
+check=`awk '/./{line=$0} END{print line}' out_add.txt  | cut -c1-33`
+if [ "$check" == " Time elapsed in midsection (s) =" ]; then
+    for j in *saga*;
+        do mv -- "$j" "${j%.txt}_$date.txt";
+    done
+    sed -i 's/ //g' *saga*
+    mv *saga* outputlocation
+    cd ~
+    rm folder_base/$date -r
+else
+    echo 'ERROR: check run'
+fi
