@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N IFDM_worker
+#PBS -l walltime=100:00:00,nodes=1:ppn=8,pmem=8gb
+ulimit -s unlimited
+
+cd folder_base/${date}
+chmod +x ifdm
+cp ifdm_coupling.conf ifdm.conf
+./ifdm > out_coupling.txt
+cp ifdm_add.conf ifdm.conf
+./ifdm > out_add.txt
+cd folder_base/${date}ospm
+cp ifdm_ospm.conf ifdm.conf
+chmod +x ifdm
+./ifdm > out_ospm.txt
+

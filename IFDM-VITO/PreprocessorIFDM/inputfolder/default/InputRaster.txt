@@ -1,0 +1,2 @@
+   center_coordinates             227         210         163 Latlon
+   
