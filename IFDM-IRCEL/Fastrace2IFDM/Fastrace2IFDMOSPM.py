@@ -55,24 +55,24 @@ def main(args):
         'XB':'X2',
         'YA':'Y1',
         'YB':'Y2',
-        'NOx':'NOX kg/km',
-        'NO2':'NO2 kg/km',
-        'PM10':'PM10 kg/km',
-        'PM25':'PM25 kg/km',
-        'BC':'EC kg/km',                # note: EC-BC conversion occurs 
+        'NOx':'NOX gmy',
+        'NO2':'NO2 gmy',
+        'PM10':'PM10 gmy',
+        'PM25':'PM25 gmy',
+        'BC':'EC gmy',                # note: EC-BC conversion occurs 
         'roadtype':'road_type',
-        'length':'length (m)',
+        'length':'length',
         'geometry':'geometry',
-        'wegID':'Fastrace_I',
+        'wegID':'ID',
         'LV':'LV',
         'ZV':'ZV',
         'V_FREEFLOW':'V_FREEFLOW'}
 
     # default conversion factor
-    conv_emissions=1.0/(24.0*365.0)/1000.0     # required: kg/km/h {this value assumes input in ton/km/year (default fastrace output)]
-    conv_counts=1.0/24.0                # required: veh/hour [this values ssumes input in vehicles/day (default fastrace output)] 
+    conv_emissions=1.0/(24.0*365.0) #/1000.0     # required: kg/km/h {this value assumes input in ton/km/year (default fastrace output)]
+    conv_counts=1.0/24.0/365.0                # required: veh/hour [this values ssumes input in vehicles/day (default fastrace output)] 
     conv_ECBC=1.5
-    conv_length=1000                    # required: m [this values assumes input in km]
+    conv_length=1     #1000                    # required: m [this values assumes input in km]
 
     """
     =======
@@ -182,11 +182,11 @@ def main(args):
     if 'Corrections' in sheets:
         print '\n Processing Corrections'
         corrections=pd.read_excel(tunnels_bridges,sheetname='Corrections')
-        corr_list=corrections['Number'].unique()
+        corr_list=corrections['Naam'].unique()
 
         for corr in corr_list:
             print 'Processing Correction: '+str(corr)
-            corr_data=corrections[corrections['Number']==corr]           
+            corr_data=corrections[corrections['Naam']==corr]           
             
             ## remove corrected segments
             remove=corr_data[corr_data['Type']=='Remove']
@@ -206,7 +206,7 @@ def main(args):
             # actual removal    
             FASTRACE_wegendubbel=FASTRACE_wegendubbel[~FASTRACE_wegendubbel.wegID.isin(remove.wegID)]
             length2=len(FASTRACE_wegendubbel)
-            print 'Removed '+str(length1-length2)+' tunnel segments'                
+            print 'Removed '+str(length1-length2)+' correction segments'                
             
             ## add rest
             rest=corr_data[corr_data['Type']=='Rest']
@@ -214,13 +214,15 @@ def main(args):
             if not rest2.empty:
                 rest2['geometry']=rest2.apply(lambda p: LineString([(p['XA'],p['YA']),(p['XB'],p['YB'])]),axis=1)
                 rest2['length']=rest2.apply(lambda p:p.geometry.length,axis=1)
-                rest2['ExtraInfo']='Correction'+corr
+                rest2['ExtraInfo']='Correction'+str(corr)
                 rest2['wegID']=-10
                 merged=FASTRACE_wegendubbel.append(rest2[column_headers.keys()+['ExtraInfo']])
                 FASTRACE_wegendubbel=merged
                 length3=len(FASTRACE_wegendubbel)
                 print 'Added '+str(length3-length2)+' rest segments'       
-        
+    
+    FASTRACE_wegendubbel.wegID=range(len(FASTRACE_wegendubbel))
+
         
     # #### Tunnels
     ###############
@@ -264,7 +266,7 @@ def main(args):
                 FASTRACE_wegendubbel=merged
             length3=len(FASTRACE_wegendubbel)
             print 'Added '+str(length3-length2)+' rest segments'            
-               
+           
             # add tunnel exit
             uitgang=tunnel_data[tunnel_data['Type']=='Exit']
             if not(uitgang.empty):
