@@ -41,8 +41,8 @@ indicators_lists = {'NO2': indicators_NO2, 'PM10': indicators_PM10, 'PM25': indi
     'BC': indicators_BC,'O3': indicators_O3}
 
 # timeframe
-startDate=datetime.datetime(2016,01,01,00)  
-endDate=datetime.datetime(2016,12,31,23)  
+startDate=datetime.datetime(2017,4,14,9)  
+endDate=datetime.datetime(2017,4,14,9)  
 
 ######################
 ##   fixed input    ##
@@ -290,12 +290,14 @@ for pollutant in pol_list:
                 
         # combine subloops
         
-        final_OSPM=pd.concat(output_array)
+        final_OSPM=pd.concat(output_array)        
+        final_OSPM.drop_duplicates(['X','Y'],inplace=True)
+        final_OSPM.index=range(len(final_OSPM))
         
         # output van het script
         result_ospm=Outputfolder+pollutant+'_OSPM.csv'        
         final_OSPM.to_csv(result_ospm,index=False)
-        
+
         # remove points that are close to each other
         print 'Remove points that are close to each other'
         final_OSPM['geometry']=final_OSPM.apply(lambda p:Point(p.X,p.Y),axis=1)
