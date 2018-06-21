@@ -1,0 +1,6 @@
+The List of Excluded Files
+Excluded files	 Exclusion Message ID	 Reason For Exclusion	 Exclusion Rule
+/tools/matlab/2016a/x86_64/toolbox/local/+matlab/+internal/+toolboxes/addInstalledToolboxesToPath.m	MATLAB:Completion:ExcludedBy	Cannot be packaged for use in the target environment MCR. Removed from the parts list by license Compiler.	/tools/matlab/2016a/x86_64/toolbox/local/[+]matlab/[+]internal/[+]toolboxes/addInstalledToolboxesToPath[.]m
+/tools/matlab/2016a/x86_64/toolbox/local/+matlab/+internal/+zipAddOns/addInstalledZipAddOnsToPath.m	MATLAB:Completion:ExcludedBy	Cannot be packaged for use in the target environment MCR. Removed from the parts list by license Compiler.	/tools/matlab/2016a/x86_64/toolbox/local/[+]matlab/[+]internal/[+]zipAddOns/addInstalledZipAddOnsToPath[.]m
+/tools/matlab/2016a/x86_64/toolbox/local/pathdef.m	MATLAB:Completion:ExcludedBy	Cannot be packaged for use in the target environment MCR. Removed from the parts list by license Compiler.	/tools/matlab/2016a/x86_64/toolbox/local/pathdef[.]m
+/tools/matlab/2016a/x86_64/toolbox/matlab/codetools/initdesktoputils.m	MATLAB:Completion:ExcludedBy	Cannot be packaged for use in the target environment MCR. Removed from the parts list by license Compiler.	/tools/matlab/2016a/x86_64/toolbox/matlab/codetools
