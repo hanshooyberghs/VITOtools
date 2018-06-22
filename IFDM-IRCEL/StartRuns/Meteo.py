@@ -176,9 +176,10 @@ class Meteo:
         self.checkPresence(script_conversion)
         self.checkPresence(file_grid_in)
         list_days=pd.Series(self.MeteoData.index.date).unique()
+        print list_days
         if len(list_days) > 1:
-            list_days=pd.Series(self.MeteoData.index.date[:-1]).unique()
-            
+            list_days=pd.Series(self.MeteoData.index.date).unique()
+        print list_days
         
         shutil.copy(folderRIO+'ConvertRIO.out',self.OutputCTM+'ConvertRIO.out')
         shutil.copy(folderRIO+'lambert4x4.dat',self.OutputCTM+'lambert4x4.dat')
