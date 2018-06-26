@@ -5,7 +5,6 @@ import subprocess
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
-from PIL import Image
 import matplotlib.pyplot as plt
 plt.ioff()
 from netCDF4 import Dataset
@@ -13,7 +12,7 @@ from matplotlib import colors
 import gdal
 
 from collections import Counter
-import tifffile
+#import tifffile
 
 def terrain2urbclim(configfile_input):
     # ******************************************************************
@@ -247,13 +246,19 @@ def terrain2urbclim(configfile_input):
 
     for ii in range(1, 13):
         month = str(ii).zfill(2)
-        vgtfile = params['pname_modis'] + '/mm62' + month + 'k.tif'
-        str4 = 'gdalwarp -s_srs EPSG:3035 -t_srs EPSG:' + params['EPSG'] + ' -te ' + str(xmins) + ' ' + str(
+#        vgtfile = params['pname_modis'] + '/mm62' + month + 'k.tif'
+        vgtfile = params['pname_modis'] + '/YearlyAvg_300m_' + month + '.tif'
+#        str4 = 'gdalwarp -s_srs EPSG:3035 -t_srs EPSG:' + params['EPSG'] + ' -te ' + str(xmins) + ' ' + str(
+#            ymins) + ' ' + str(xmaxs) + ' ' + str(ymaxs) + ' -tr ' + str(dxy) + ' ' + str(
+#            dxy) + ' ' + vgtfile + ' '+logfolder+'/temp_veg_' + month + '.tif'
+        str4 = 'gdalwarp -s_srs EPSG:4326 -t_srs EPSG:' + params['EPSG'] + ' -te ' + str(xmins) + ' ' + str(
             ymins) + ' ' + str(xmaxs) + ' ' + str(ymaxs) + ' -tr ' + str(dxy) + ' ' + str(
             dxy) + ' ' + vgtfile + ' '+logfolder+'/temp_veg_' + month + '.tif'
         execute(str4)
         dvi = read_tiff(logfolder+'/temp_veg_' + month + '.tif')
+        dvi = (dvi + 0.08) * 250
         if np.min(dvi) < 10 or np.max(dvi) > 250:  # missing pixels
+#        if np.nanmin(dvi) < 10 or np.nanmax(dvi) > 250:
             dvi[dvi < 10] = 1
             dvi[dvi > 250] = 1
         dvi = dvi * landmask
@@ -301,11 +306,11 @@ def terrain2urbclim(configfile_input):
         z0m_buildings=(buildings*a/10.)+\
             (b*green*2.) 
         z0m_buildings[z0m_buildings >= 2.0]=2.0
-        z0m_buildings[z0m_buildings <= 0.1]=0.1
- #       z0m[(sfctyp <= 3.) & (z0m_buildings >= 0.1)]=\
- #           z0m_buildings[(sfctyp <= 3.) & (z0m_buildings >= 0.1)]
-        z0m[(sfctyp <= 3.)]=\
-            z0m_buildings[(sfctyp <= 3.)]
+ #       z0m_buildings[z0m_buildings <= 0.1]=0.1
+        z0m[(sfctyp <= 3.) & (z0m_buildings >= 0.1)]=\
+            z0m_buildings[(sfctyp <= 3.) & (z0m_buildings >= 0.1)]
+ #       z0m[(sfctyp <= 3.)]=\
+ #           z0m_buildings[(sfctyp <= 3.)]
 
     # ******************************************************************
     # ******************************************************************
@@ -319,9 +324,9 @@ def terrain2urbclim(configfile_input):
                'fname_dem'] +' '+ logfolder+'/temp_dem.tif'
     execute(str5)
 
-    with tifffile.TiffFile(logfolder+'/temp_dem.tif') as tif:
-        dem = tif.asarray()
-
+    #with tifffile.TiffFile() as tif:
+    #    dem = tif.asarray()
+    dem=read_tiff(logfolder+'/temp_dem.tif')
     outofdem = np.where(dem < 0)
     dem[outofdem] = 0
     dem = dem.astype(float)
@@ -358,7 +363,7 @@ def terrain2urbclim(configfile_input):
     # ******************************************************************
     # ******************************************************************
 
-    str8 = 'gdalwarp -s_srs EPSG:4326 -t_srs EPSG:' + params['EPSG'] + ' -te ' + str(xmins) + ' ' + str(ymins) + ' ' + str(
+    str8 = 'gdalwarp -s_srs EPSG:3035 -t_srs EPSG:' + params['EPSG'] + ' -te ' + str(xmins) + ' ' + str(ymins) + ' ' + str(
         xmaxs) + ' ' + str(ymaxs) + ' -tr ' + str(dxy) + ' ' + str(dxy) + ' -r cubicspline ' + params[
                'fname_ahf'] + ' '+logfolder+'/temp_ahf.tif'
 
