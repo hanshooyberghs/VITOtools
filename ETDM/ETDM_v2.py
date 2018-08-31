@@ -12,7 +12,7 @@ The model will perform the following actions:
     * Split lines at vertices
     * Other columns (height, speed...) added  
     
-    2. Spread the COPERT-vehicle kms according to the OTM data
+    2. Spread the COPERT-vehicle kms according to the OTM data, using capacity
 
 positional arguments:
   country_code          Country Code for which data will be read
